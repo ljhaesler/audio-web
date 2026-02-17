@@ -1,0 +1,7 @@
+node_modules
+.vscode
+outputs/color-dataArray-0.png
+outputs/flat-color.png
+outputs/flat-color-red.png
+outputs/grey-black.png
+outputs/red-black.png

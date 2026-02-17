@@ -1,3 +1,5 @@
+import canvasSketch from "canvas-sketch";
+
 const mySound = new Audio("explosion.wav");
 const audioContext = new AudioContext();
 const audioAnalyser = audioContext.createAnalyser();
@@ -7,82 +9,89 @@ source.connect(audioAnalyser);
 audioAnalyser.connect(audioContext.destination);
 
 const bufferLength = audioAnalyser.frequencyBinCount;
+// audioAnalyser.fftSize = 16384;
+
 const dataArray = new Uint8Array(bufferLength);
 
-const playButton = document.querySelector("button");
-const audioCanvas = document.querySelector("canvas");
-const ctx = audioCanvas.getContext("2d");
+function sketch({ context, width, height, frame }) {
+  const sliceWidth = width / bufferLength;
 
-let animationId;
+  context.fillStyle = "rgb(255 255 255)";
+  context.fillRect(0, 0, width, height);
 
-ctx.clearRect(0, 0, audioCanvas.width, audioCanvas.height);
+  // this is placed outside of the render loop
+  // that way the lines are not overwritten on each loop
 
-function draw() {
-  animationId = requestAnimationFrame(draw);
-  audioAnalyser.getByteTimeDomainData(dataArray);
+  return function render({ context, width, height, frame }) {
+    audioAnalyser.getByteTimeDomainData(dataArray);
 
-  console.log(dataArray);
+    // ------------ section will define a line across the canvas
+    // beginPath, in tandem with stroke, defines and draws a single line
+    // this lines style/shape can then be modified using various parameters
+    context.beginPath();
 
-  ctx.fillStyle = "rgb(230 230 230)";
-  ctx.fillRect(0, 0, audioCanvas.width, audioCanvas.height);
+    const max = Math.max(...dataArray);
+    const min = Math.min(...dataArray);
 
-  ctx.lineWidth = 1;
-  ctx.strokeStyle = "rgb(0 0 0)";
-  ctx.beginPath();
+    const maxDist128 = max - 128;
+    const minDist128 = 128 - min;
 
-  const sliceWidth = audioCanvas.width / bufferLength;
-  let x = 0;
+    const color =
+      maxDist128 > minDist128
+        ? 255 - (maxDist128 * 2 - 1)
+        : 255 - (minDist128 * 2 - 1);
 
-  for (let i = 0; i < bufferLength; i++) {
-    // dataArray contains values that oscillate around 128
-    // by dividing by 128, we can create a vector value to multiply the base y height by.
-    // if dataArray[i] === 128 then y = audioCanvas.height / 2
-    // else y = vector * audioCanvas.height / 2
+    // '255 -' and '0 +' allow for fading to brighter and fading to darker respectively
 
-    const v = dataArray[i] / 128.0;
-    const y = v * (audioCanvas.height / 2);
+    // const color =
+    //   maxDist128 > minDist128
+    //     ? 0 + (maxDist128 * 2 - 1)
+    //     : 0 + (minDist128 * 2 - 1);
 
-    if (i === 0) {
-      ctx.moveTo(x, y);
+    if (maxDist128 > minDist128) {
+      context.strokeStyle = `rgb(255 255 255)`;
     } else {
-      ctx.lineTo(x, y);
+      context.strokeStyle = `rgb(${color} ${color} ${color})`;
+    }
+    context.lineWidth = 2;
+    let x = 0;
+
+    for (let i = 0; i < bufferLength; i++) {
+      // dataArray contains values that oscillate around 128
+      // by dividing by 128, we can create a vector value to multiply the base y height by.
+      // if dataArray[i] === 128 then y = height / 2
+      // else y = vector * height / 2
+      const v = dataArray[i] / 128.0;
+      const y = (v * height) / 2;
+
+      if (i === 0) {
+        context.moveTo(x, y);
+      } else {
+        context.lineTo(x, y);
+      }
+
+      x += sliceWidth;
     }
 
-    x += sliceWidth;
-  }
-
-  ctx.lineTo(audioCanvas.width, audioCanvas.height / 2);
-  ctx.stroke();
+    context.stroke();
+    // ------------ section will sketch a line across the canvas
+  };
 }
 
-document.addEventListener("keydown", function (event) {
-  if (event.key === "space") {
-  }
-});
-
-playButton.addEventListener("click", () => {
-  if (audioContext.state === "suspended") {
-    audioContext.resume();
-  }
-
-  if (playButton.dataset.playing === "false") {
+canvasSketch(sketch, { dimensions: [2048, 512], animate: true, fps: 24 }).then(
+  (manager) => {
+    if (audioContext.state === "suspended") {
+      audioContext.resume();
+    }
     mySound.play();
-    playButton.dataset.playing = "true";
-  } else if (playButton.dataset.playing === "true") {
-    mySound.pause();
-    playButton.dataset.playing = "false";
-  }
-});
+    manager.togglePlay();
 
-mySound.addEventListener("play", () => {
-  draw();
-});
-
-mySound.addEventListener("pause", () => {
-  cancelAnimationFrame(animationId);
-});
-
-mySound.addEventListener("ended", () => {
-  playButton.dataset.playing = "false";
-  cancelAnimationFrame(animationId);
-});
+    document.addEventListener("click", () => {
+      if (audioContext.state === "suspended") {
+        audioContext.resume();
+      }
+      mySound.play();
+      manager.togglePlay();
+    });
+  },
+);

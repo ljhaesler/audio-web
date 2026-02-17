@@ -1,0 +1,23 @@
+{
+  "name": "audio-web",
+  "version": "1.0.0",
+  "description": "For learning to use/visualise audio with the Web Audio API",
+  "homepage": "https://github.com/ljhaesler/audio-web#readme",
+  "bugs": {
+    "url": "https://github.com/ljhaesler/audio-web/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ljhaesler/audio-web.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "audio.js",
+  "scripts": {
+    "test": "canvas-sketch audio.js --open"
+  },
+  "dependencies": {
+    "canvas-sketch": "^0.7.7"
+  }
+}
