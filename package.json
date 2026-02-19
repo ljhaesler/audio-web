@@ -15,7 +15,7 @@
   "type": "module",
   "main": "audio.js",
   "scripts": {
-    "test": "canvas-sketch audio.js --open"
+    "test": "canvas-sketch single-magnitude-spectrum.js --open"
   },
   "dependencies": {
     "canvas-sketch": "^0.7.7"
