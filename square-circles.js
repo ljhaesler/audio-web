@@ -1,6 +1,6 @@
 import canvasSketch from "canvas-sketch";
 
-const audioElement = new Audio("audio-samples/sad-violin.mp3");
+const audioElement = new Audio("audio-samples/rain.mp3");
 const audioContext = new AudioContext();
 
 const audioAnalyserNode = audioContext.createAnalyser();
@@ -23,23 +23,19 @@ function sketch({ context, width, height, frame }) {
       context.clearRect(0, 0, width, height);
       audioAnalyserNode.getByteFrequencyData(dataArray);
 
-      // let x = 8;
-      // let y = height - 8;
-
-      let x = 0;
-      let y = height;
+      let x = 8;
+      let y = height - 8;
 
       for (let i = 0; i < bufferLength; i++) {
         let colorValue = 255 - dataArray[i];
 
         context.fillStyle = `rgb(${colorValue} ${colorValue} ${colorValue})`;
-        context.fillRect(x, y, 16, 16);
 
-        // context.beginPath();
-        // context.arc(x, y, 8, 0, 2 * Math.PI);
-        // context.fill();
+        context.beginPath();
+        context.arc(x, y, 8, 0, 2 * Math.PI);
+        context.fill();
         if (x >= width - 16) {
-          x = 0;
+          x = 8;
           y -= 16;
         } else {
           x += 16;

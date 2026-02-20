@@ -8,7 +8,7 @@ const audioSourceNode = audioContext.createMediaElementSource(audioElement);
 
 audioSourceNode.connect(audioAnalyserNode);
 audioAnalyserNode.connect(audioContext.destination);
-
+audioAnalyserNode.fftSize = 128;
 const bufferLength = audioAnalyserNode.frequencyBinCount;
 
 const dataArray = new Uint8Array(bufferLength);
@@ -59,7 +59,7 @@ function sketch({ context, width, height, frame }) {
   };
 }
 
-canvasSketch(sketch, { dimensions: [1024, 512], animate: true }).then(
+canvasSketch(sketch, { dimensions: [2048, 512], animate: true }).then(
   (manager) => {
     document.addEventListener("click", () => {
       if (audioContext.state === "suspended") {

@@ -1,6 +1,6 @@
 import canvasSketch from "canvas-sketch";
 
-const audioElement = new Audio("audio-samples/sad-violin.mp3");
+const audioElement = new Audio("audio-samples/rain.mp3");
 const audioContext = new AudioContext();
 
 // create our nodes from the AudioContext
@@ -12,7 +12,7 @@ const audioSourceNode = audioContext.createMediaElementSource(audioElement);
 audioSourceNode.connect(audioAnalyserNode);
 audioAnalyserNode.connect(audioContext.destination);
 
-audioAnalyserNode.fftSize = 4096;
+audioAnalyserNode.fftSize = 1024;
 const bufferLength = audioAnalyserNode.frequencyBinCount;
 
 const dataArray = new Uint8Array(bufferLength);
@@ -78,7 +78,7 @@ function sketch({ context, width, height, frame }) {
   };
 }
 
-canvasSketch(sketch, { dimensions: [2048, 512], animate: true, fps: 24 }).then(
+canvasSketch(sketch, { dimensions: [1024, 512], animate: true, fps: 24 }).then(
   (manager) => {
     document.addEventListener("click", () => {
       if (audioContext.state === "suspended") {

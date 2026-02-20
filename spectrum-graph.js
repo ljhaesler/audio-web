@@ -1,6 +1,7 @@
 import canvasSketch from "canvas-sketch";
 
-const audioElement = new Audio("audio-samples/music.mp3");
+const audioElement = new Audio("audio-samples/rain.mp3");
+let audioElementPlaying = false;
 const audioContext = new AudioContext();
 
 // create our nodes from the AudioContext
@@ -12,29 +13,37 @@ const audioSourceNode = audioContext.createMediaElementSource(audioElement);
 audioSourceNode.connect(audioAnalyserNode);
 audioAnalyserNode.connect(audioContext.destination);
 
+audioAnalyserNode.fftSize = 512;
 const bufferLength = audioAnalyserNode.frequencyBinCount;
 
+// 5/6 will remove frequencies above 20000 hz
+// these frequencies are almost always filtered out anyway.
 const dataArray = new Uint8Array(bufferLength);
 
 function sketch({ context, width, height, frame }) {
-  const sliceWidth = width / bufferLength;
+  // again, 1 / (5/6) = 1.2, to compensate for the loss of 20000 to 24000 hz
+  // this will increase the width of the drawn spectrum graph.
+  const sliceWidth = (width / bufferLength) * 1.2;
 
+  let currentFrame = -1;
   // this is placed outside of the render loop
   // that way the lines are not overwritten on each loop
 
   return function render({ context, width, height, frame }) {
+    currentFrame += 1;
+
     audioAnalyserNode.getByteFrequencyData(dataArray);
     context.beginPath();
 
-    const max = Math.max(...dataArray);
-
-    context.strokeStyle = `rgb(${255 - max} ${255 - max} ${255 - max})`;
+    const avg =
+      dataArray.reduce((acc, curr) => acc + curr, 0) / dataArray.length;
+    context.strokeStyle = `rgb(${avg + 32} 0 ${frame})`;
 
     context.lineWidth = 1;
     let x = 0;
 
     for (let i = 0; i < bufferLength; i++) {
-      const v = dataArray[i] / 256;
+      const v = dataArray[i] / 255;
       const y = height - v * height;
 
       if (i === 0) {
@@ -51,13 +60,24 @@ function sketch({ context, width, height, frame }) {
   };
 }
 
-canvasSketch(sketch, { dimensions: [2048, 512], animate: true }).then(
-  (manager) => {
-    document.addEventListener("click", () => {
-      if (audioContext.state === "suspended") {
-        audioContext.resume();
-      }
+canvasSketch(sketch, {
+  dimensions: [2048, 512],
+  animate: true,
+  fps: 4,
+}).then((manager) => {
+  document.addEventListener("click", () => {
+    if (audioContext.state === "suspended") {
+      audioContext.resume();
+    }
+
+    if (audioElementPlaying) {
+      audioElement.pause();
+      manager.pause();
+      audioElementPlaying = false;
+    } else {
       audioElement.play();
-    });
-  },
-);
+      manager.play();
+      audioElementPlaying = true;
+    }
+  });
+});
