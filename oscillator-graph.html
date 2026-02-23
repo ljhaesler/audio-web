@@ -1,53 +1,52 @@
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, shrink-to-fit=0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-  <style>
-    body {
-        display: flexbox;
-    }
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, shrink-to-fit=0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <style>
 
-    label {
-        display: flex;
+            body {
+                display: flexbox;
+            }
 
-    }
+            label {
+                display: flex;
 
+            }
 
-    input[type="range"] {
-        display: flex;
-        width: 50%;
-    }
+            input[type="range"] {
+                display: flex;
+                width: 50%;
+            }
 
-    canvas {
-        display:flex;
-        max-width: 100%;
-        height: auto;
+            canvas {
+                display:flex;
+                max-width: 100%;
+                height: auto;
 
-    }
+            }
 
-
-</style>
-</head>
-<body>
-    <label for="squareWaveSlider" id="squareWaveLabel">Square Wave: 0 hz</label>
-    <input id="squareWaveSlider" type="range" min="0" max="8192" value="0">
-    <label for="triangleWaveSlider" id="triangleWaveLabel">Triangle Wave: 0 hz</label>
-    <input id="triangleWaveSlider" type="range" min="0" max="8192" value="0">
-    <label for="sineWaveSlider" id="sineWaveLabel">Sine Wave: 0 hz</label>
-    <input id="sineWaveSlider" type="range" min="0" max="8192" value="0">
-    <label for="fftSizeDropdown" id="fftSizeLabel">FFT Size: 2048</label>
-    <select id="fftSizeDropdown">
-        <option value="32">32</option>
-        <option value="64">64</option>
-        <option value="128">128</option>
-        <option value="256">256</option>
-        <option value="512">512</option>
-        <option value="1024">1024</option>
-        <option value="2048" selected>2048</option>
-        <option value="4096">4096</option>
-    </select>
-    <div>
-        <script type="module" src="oscillator-graph.js"></script>
-    </div>
-</body>
+        </style>
+    </head>
+    <body>
+        <label for="squareWaveSlider" id="squareWaveLabel">Square Wave: 0 hz</label>
+        <input id="squareWaveSlider" type="range" min="0" max="8192" value="0">
+        <label for="triangleWaveSlider" id="triangleWaveLabel">Triangle Wave: 0 hz</label>
+        <input id="triangleWaveSlider" type="range" min="0" max="8192" value="0">
+        <label for="sineWaveSlider" id="sineWaveLabel">Sine Wave: 0 hz</label>
+        <input id="sineWaveSlider" type="range" min="0" max="8192" value="0">
+        <label for="fftSizeDropdown" id="fftSizeLabel">FFT Size: 2048</label>
+        <select id="fftSizeDropdown">
+            <option value="32">32</option>
+            <option value="64">64</option>
+            <option value="128">128</option>
+            <option value="256">256</option>
+            <option value="512">512</option>
+            <option value="1024">1024</option>
+            <option value="2048" selected>2048</option>
+            <option value="4096">4096</option>
+        </select>
+        <div>
+            <script type="module" src="oscillator-graph.js"></script>
+        </div>
+    </body>
 </html>

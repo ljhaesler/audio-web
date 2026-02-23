@@ -55,7 +55,6 @@ function sketch({ context, width, height, frame }) {
     }
 
     context.stroke();
-    // ------------ section will sketch a line across the canvas
   };
 }
 

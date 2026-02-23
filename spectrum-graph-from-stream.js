@@ -16,7 +16,7 @@ canvasSketch(async ({ width, height }) => {
   const audioAnalyserNode = audioContext.createAnalyser();
 
   audioSourceNode.connect(audioAnalyserNode);
-  // Do NOT connect analyser to destination to avoid feedback
+  audioAnalyserNode.connect(audioContext.destination);
   audioAnalyserNode.fftSize = 2048;
 
   const bufferLength = audioAnalyserNode.frequencyBinCount;
