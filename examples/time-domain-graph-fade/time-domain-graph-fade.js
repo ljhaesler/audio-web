@@ -1,3 +1,13 @@
+class ColorPath2D extends Path2D {
+  setColor(color) {
+    this.color = color;
+  }
+
+  getColor() {
+    return this.color;
+  }
+}
+
 // Create canvas
 const canvas = document.createElement("canvas");
 const width = 4096;
@@ -21,18 +31,21 @@ const audioSourceNode = audioContext.createMediaElementSource(audioElement);
 audioSourceNode.connect(audioAnalyserNode);
 audioAnalyserNode.connect(audioContext.destination);
 
-audioAnalyserNode.fftSize = 8192;
+audioAnalyserNode.fftSize = 16384;
 const bufferLength = audioAnalyserNode.frequencyBinCount;
 
 const dataArray = new Uint8Array(bufferLength);
 const sliceWidth = width / bufferLength;
 
+context.fillStyle = "rgb(0 0 0)";
+const paths = [];
+
 function render() {
   requestAnimationFrame(render);
 
   audioAnalyserNode.getByteTimeDomainData(dataArray);
-
-  context.beginPath();
+  context.fillRect(0, 0, width, height);
+  const path = new ColorPath2D();
 
   const max = Math.max(...dataArray);
   const min = Math.min(...dataArray);
@@ -46,11 +59,11 @@ function render() {
       : 255 - (minDist128 * 2 + 1);
 
   if (maxDist128 > minDist128) {
-    context.strokeStyle = `rgb(255 ${color} ${color})`;
+    path.setColor(`rgb(255 ${color} 255 )`);
   } else {
-    context.strokeStyle = `rgb(${color} ${color} 255)`;
+    path.setColor(`rgb(255 255 ${color})`);
   }
-  context.lineWidth = 1;
+
   let x = 0;
 
   for (let i = 0; i < bufferLength; i++) {
@@ -58,15 +71,21 @@ function render() {
     const y = (v * height) / 2;
 
     if (i === 0) {
-      context.moveTo(x, y);
+      path.moveTo(x, y);
     } else {
-      context.lineTo(x, y);
+      path.lineTo(x, y);
     }
 
     x += sliceWidth;
   }
 
-  context.stroke();
+  if (paths.length >= 32) paths.shift();
+  paths.push(path);
+
+  paths.forEach((el) => {
+    context.strokeStyle = el.getColor();
+    context.stroke(el);
+  });
 }
 
 document.addEventListener("click", () => {

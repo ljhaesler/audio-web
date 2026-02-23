@@ -13,7 +13,7 @@ context.fillRect(0, 0, width, height);
 context.globalAlpha = 1.0;
 
 // --- Audio Setup ---
-const audioElement = new Audio("../../audio-samples/sad-violin.mp3");
+const audioElement = new Audio("../../audio-samples/music.mp3");
 const audioContext = new AudioContext();
 
 const audioAnalyserNode = audioContext.createAnalyser();
@@ -43,7 +43,7 @@ function render() {
   context.beginPath();
 
   for (let i = 0; i < bufferLength; i++) {
-    context.strokeStyle = `rgb(${dataArray[i]} 0 0)`;
+    context.strokeStyle = `rgb(${dataArray[i]} ${dataArray[i]} ${dataArray[i]})`;
 
     context.strokeRect(x, y, 1, 1);
 

@@ -6,7 +6,6 @@ canvas.width = width;
 canvas.height = height;
 document.body.appendChild(canvas);
 const context = canvas.getContext("2d");
-context.fillRect(0, 0, width, height);
 context.globalAlpha = 1.0;
 
 // Audio setup
